@@ -3,5 +3,17 @@
    "extends": [
       "airbnb/base"
    ],
-   "rules": {}
+   "plugins": ["prettier"],
+   "rules": {
+      "prettier/prettier": [
+         "error",
+       {
+         "singleQuote": true
+       }
+       ]
+   },
+   "env": {
+      "browser": true,
+      "node": true
+   }
 }

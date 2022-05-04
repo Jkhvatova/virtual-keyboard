@@ -21,7 +21,6 @@ module.exports = {
   },
   module: {
     rules: [
-
       {
         test: /\.js$/,
         exclude: '/node_modules/',
@@ -34,11 +33,7 @@ module.exports = {
       },
       {
         test: /\.s?css$/,
-        use: [
-          MiniCssExtractPlugin.loader,
-          'css-loader',
-          'sass-loader',
-        ],
+        use: [MiniCssExtractPlugin.loader, 'css-loader', 'sass-loader'],
       },
     ],
   },
@@ -54,6 +49,7 @@ module.exports = {
       inject: true,
       chunks: ['index'],
       filename: 'index.html',
+      favicon: './src/favicon.ico',
     }),
   ],
 };
