@@ -15,9 +15,9 @@ export default class Keyboard {
     const keysLayout = this.layout;
     // eslint-disable-next-line no-console
     console.log(keysLayout);
-    this.layout.forEach((item) => {
+    Object.entries(keysLayout).forEach(([attribute, value]) => {
       const key = new Key();
-      key.renderKey(item);
+      key.renderKey(attribute, value.en);
     });
   }
 }

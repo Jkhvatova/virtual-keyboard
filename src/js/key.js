@@ -3,10 +3,11 @@ export default class Key {
     this.value = value;
   }
 
-  renderKey(value) {
+  renderKey(attribute, value) {
     this.key = document.createElement('div');
     this.key.className = 'key';
     this.key.innerHTML = value;
+    this.key.setAttribute('data-keycode', attribute);
     switch (value) {
       case 'backspace':
         this.key.classList.add('backspace');
@@ -17,7 +18,7 @@ export default class Key {
       case 'del':
         this.key.classList.add('del');
         break;
-      case 'caps lock':
+      case 'capslock':
         this.key.classList.add('caps');
         break;
       case 'enter':
@@ -35,7 +36,7 @@ export default class Key {
       case 'command':
         this.key.classList.add('command');
         break;
-      case '':
+      case ' ':
         this.key.classList.add('space');
         break;
       default:
