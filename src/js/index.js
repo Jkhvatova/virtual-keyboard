@@ -2,16 +2,52 @@ import '../sass/main.scss';
 import keyLayouts from './layouts';
 import Keyboard from './keyboard';
 
-const keyboard = new Keyboard(keyLayouts);
-keyboard.renderKeyboard();
-keyboard.createKeys();
-const keys = document.querySelectorAll('.key');
+// adding variables
+let keyBoardlang = 'en'; // add keyboard initial language state
+const main = document.createElement('div');
+main.className = 'main';
+document.body.append(main);
 
 // adding textarea
+const monitorWrapper = document.createElement('div');
+monitorWrapper.classList.add('monitor-wrapper');
+const monitor = document.createElement('div');
+monitor.classList.add('monitor');
 const textarea = document.createElement('textarea');
 textarea.classList.add('keyboard-input');
-document.body.append(textarea);
+main.append(monitorWrapper);
+monitorWrapper.append(monitor);
+monitor.append(textarea);
 textarea.innerHTML = '';
+textarea.focus();
+
+// creating keyboard
+const keyboardWrapper = document.createElement('div');
+keyboardWrapper.classList.add('keyboard-wrapper');
+main.append(keyboardWrapper);
+const keyboard = new Keyboard(keyLayouts);
+keyboard.renderKeyboard(keyBoardlang, keyboardWrapper);
+keyboard.createKeys(keyBoardlang);
+const keyboardActiveClass = document.querySelector('.keyboard');
+const keys = document.querySelectorAll('.key');
+
+// handle language change
+const handleLangChange = () => {
+  if (keyboardActiveClass.classList.contains('en')) {
+    keyboardActiveClass.innerHTML = '';
+    keyboard.createKeys('ru');
+    keyboardActiveClass.classList.remove('en');
+    keyboardActiveClass.classList.add('ru');
+    keyBoardlang = 'ru';
+  } else if (keyboardActiveClass.classList.contains('ru')) {
+    keyboardActiveClass.innerHTML = '';
+    keyboard.createKeys('en');
+    keyboardActiveClass.classList.remove('ru');
+    keyboardActiveClass.classList.add('en');
+    keyBoardlang = 'en';
+  }
+};
+// handle shift and caps
 
 // adding key values to input
 function addKeyValueInput(key) {
@@ -20,11 +56,25 @@ function addKeyValueInput(key) {
     case 'Backspace':
       textarea.innerHTML = textarea.innerHTML.slice(0, -1);
       break;
+    // ПЕРЕДЛАТЬ ПРАВИЛЬНо!
+    case 'Del':
+      textarea.innerHTML = textarea.innerHTML.slice(0, -1);
+      break;
     case 'Tab':
       textarea.innerHTML = `  ${textarea.innerHTML}`;
       break;
     case 'Enter':
       textarea.innerHTML += '\n';
+      break;
+    case 'ShiftLeft':
+    case 'ShiftRight':
+    case 'AltLeft':
+    case 'ControlRight':
+    case 'ControlLeft':
+    case 'AltRight':
+    case 'MetaLeft':
+    case 'MetaRight':
+      textarea.innerHTML += '';
       break;
     case 'ArrowUp':
       textarea.innerHTML += '&#x25B4;';
@@ -42,7 +92,9 @@ function addKeyValueInput(key) {
       textarea.innerHTML += keyContent;
       break;
   }
+  textarea.focus();
 }
+
 keys.forEach((key) => {
   key.addEventListener('mousedown', (e) => {
     e.target.classList.add('active');
@@ -50,25 +102,62 @@ keys.forEach((key) => {
     addKeyValueInput(key);
     // eslint-disable-next-line no-console
     console.log(key.innerHTML);
+    if (key.dataset.keycode === 'ShiftLeft') {
+      // eslint-disable-next-line no-console
+      console.log('cathc!');
+      keyboardActiveClass.innerHTML = '';
+      keyboard.createKeys('shift');
+    }
+    // e.preventDefault();
   });
   key.addEventListener('mouseup', (e) => {
     e.target.classList.remove('active');
+    if (key.dataset.keycode === 'ShiftLeft') {
+      // eslint-disable-next-line no-console
+      console.log('cathc renmove!');
+      keyboardActiveClass.innerHTML = '';
+      keyboard.createKeys(keyBoardlang);
+    }
   });
 });
 
-window.addEventListener('keydown', (e) => {
+// changing keyboard layouts
+// change keyboard layout on pressing Ctrl + Alt
+const keysPressed = {};
+
+document.addEventListener('keydown', (e) => {
+  keysPressed[e.code] = true;
+  // eslint-disable-next-line no-console
+  console.log(e.key);
   keys.forEach((key) => {
     if (e.code === key.dataset.keycode) {
       key.classList.add('active');
       textarea.focus();
+      addKeyValueInput(key);
     }
   });
+  if (keysPressed.ControlLeft && e.code === 'AltLeft') {
+    handleLangChange();
+  }
+  if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
+    // eslint-disable-next-line no-console
+    console.log('cathc!');
+    keyboardActiveClass.innerHTML = '';
+    keyboard.createKeys('shift');
+  }
+  e.preventDefault();
 });
 
-window.addEventListener('keyup', (e) => {
+document.addEventListener('keyup', (e) => {
+  keysPressed[e.code] = false;
   keys.forEach((key) => {
     if (e.code === key.dataset.keycode) {
       key.classList.remove('active');
     }
+    textarea.focus();
   });
+  if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
+    keyboardActiveClass.innerHTML = '';
+    keyboard.createKeys(keyBoardlang);
+  }
 });
