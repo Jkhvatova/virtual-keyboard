@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "Rsschool project",
   "main": "index.js",
+  "homepage": "https://jkhvatova.github.io/virtual-keyboard",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "eslint ./src && webpack-dev-server --mode development --open",
