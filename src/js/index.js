@@ -61,16 +61,7 @@ const handleLangChange = () => {
     keyBoardlang = 'en';
   }
 };
-// handle shift and caps
-const handleShiftChange = () => {
-  if (keyboardActiveClass.classList.contains('en')) {
-    keyboardActiveClass.innerHTML = '';
-    keyboard.createKeys('enshift');
-  } else if (keyboardActiveClass.classList.contains('ru')) {
-    keyboardActiveClass.innerHTML = '';
-    keyboard.createKeys('rushift');
-  }
-};
+
 // adding key values to input
 function addKeyValueInput(key) {
   const keyContent = key.innerHTML;
@@ -78,7 +69,6 @@ function addKeyValueInput(key) {
     case 'Backspace':
       textarea.innerHTML = textarea.innerHTML.slice(0, -1);
       break;
-    // ПЕРЕДЛАТЬ ПРАВИЛЬНо!
     case 'Del':
       textarea.innerHTML = textarea.innerHTML.slice(0, -1);
       break;
@@ -121,26 +111,22 @@ keys.forEach((key) => {
   key.addEventListener('mousedown', (e) => {
     e.target.classList.add('active');
     textarea.focus();
-    addKeyValueInput(key);
-    // eslint-disable-next-line no-console
-    console.log(key.innerHTML);
-    if (key.dataset.keycode === 'ShiftLeft') {
-      // eslint-disable-next-line no-console
-      console.log('cathc!');
-      handleShiftChange();
-      e.preventDefault();
+    if (key.dataset.keycode === 'ShiftLeft' && keyBoardlang === 'ru') {
+      keyboardActiveClass.innerHTML = '';
+      keyboard.createKeys('rushift');
+    } else if (key.dataset.keycode === 'ShiftLeft' && keyBoardlang === 'en') {
+      keyboardActiveClass.innerHTML = '';
+      keyboard.createKeys('enshift');
+    } else {
+      addKeyValueInput(key);
     }
   });
   key.addEventListener('mouseup', (e) => {
-    // eslint-disable-next-line no-console
-    console.log(key.dataset.keycode);
-    if (key.dataset.keycode === 'ShiftLeft') {
-      // eslint-disable-next-line no-console
-      console.log('cathc renmove!');
-      keyboardActiveClass.innerHTML = '';
-      keyboard.createKeys(keyBoardlang);
-    }
     e.target.classList.remove('active');
+    if (key.dataset.keycode === 'ShiftLeft' && keyBoardlang === 'en') {
+      keyboardActiveClass.innerHTML = '';
+      keyboard.createKeys('en');
+    }
   });
 });
 
@@ -150,23 +136,24 @@ const keysPressed = {};
 
 document.addEventListener('keydown', (e) => {
   keysPressed[e.code] = true;
-  // eslint-disable-next-line no-console
-  console.log(e.key);
   keys.forEach((key) => {
     if (e.code === key.dataset.keycode) {
       key.classList.add('active');
       textarea.focus();
-      addKeyValueInput(key);
+      if (key.dataset.keycode === 'ShiftLeft' && keyBoardlang === 'ru') {
+        keyboardActiveClass.innerHTML = '';
+        keyboard.createKeys('rushift');
+      } else if (key.dataset.keycode === 'ShiftLeft' && keyBoardlang === 'en') {
+        keyboardActiveClass.innerHTML = '';
+        keyboard.createKeys('enshift');
+      } else {
+        key.classList.add('active');
+        addKeyValueInput(key);
+      }
     }
   });
   if (keysPressed.ControlLeft && e.code === 'AltLeft') {
     handleLangChange();
-  }
-  if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
-    // eslint-disable-next-line no-console
-    console.log('cathc!');
-    keyboardActiveClass.innerHTML = '';
-    keyboard.createKeys('enshift');
   }
   e.preventDefault();
 });
@@ -177,12 +164,14 @@ document.addEventListener('keyup', (e) => {
     if (e.code === key.dataset.keycode) {
       key.classList.remove('active');
     }
+    if (key.dataset.keycode === 'ShiftLeft' && keyBoardlang === 'en') {
+      keyboardActiveClass.innerHTML = '';
+      keyboard.createKeys('en');
+    }
+    if (key.dataset.keycode === 'ShiftLeft' && keyBoardlang === 'ru') {
+      keyboardActiveClass.innerHTML = '';
+      keyboard.createKeys('ru');
+    }
     textarea.focus();
   });
-  if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
-    // eslint-disable-next-line no-console
-    console.log('cathc up!');
-    keyboardActiveClass.innerHTML = '';
-    keyboard.createKeys(keyBoardlang);
-  }
 });
