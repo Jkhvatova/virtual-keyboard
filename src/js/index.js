@@ -3,7 +3,7 @@ import keyLayouts from './layouts';
 import Keyboard from './keyboard';
 
 // adding variables
-let keyBoardlang = 'en'; // add keyboard initial language state
+let siteLang = 'en'; // add keyboard initial language state
 const main = document.createElement('div');
 main.className = 'main';
 document.body.append(main);
@@ -40,10 +40,26 @@ const keyboardWrapper = document.createElement('div');
 keyboardWrapper.classList.add('keyboard-wrapper');
 main.append(keyboardWrapper);
 const keyboard = new Keyboard(keyLayouts);
-keyboard.renderKeyboard(keyBoardlang, keyboardWrapper);
-keyboard.createKeys(keyBoardlang);
+keyboard.renderKeyboard(siteLang, keyboardWrapper);
 const keyboardActiveClass = document.querySelector('.keyboard');
 const keys = document.querySelectorAll('.key');
+// eslint-disable-next-line no-console
+console.log(keys);
+
+// Local storage
+
+function setLocalLangStorage() {
+  localStorage.setItem('siteLang', siteLang);
+}
+window.addEventListener('beforeunload', setLocalLangStorage);
+
+function getLocalLangStorage() {
+  if (localStorage.getItem('siteLang')) {
+    const lang = localStorage.getItem('siteLang');
+    keyboard.createKeys(lang);
+  }
+}
+window.addEventListener('load', getLocalLangStorage);
 
 // handle language change
 const handleLangChange = () => {
@@ -52,13 +68,15 @@ const handleLangChange = () => {
     keyboard.createKeys('ru');
     keyboardActiveClass.classList.remove('en');
     keyboardActiveClass.classList.add('ru');
-    keyBoardlang = 'ru';
+    siteLang = 'ru';
+    localStorage.setItem('siteLang', siteLang);
   } else if (keyboardActiveClass.classList.contains('ru')) {
     keyboardActiveClass.innerHTML = '';
     keyboard.createKeys('en');
     keyboardActiveClass.classList.remove('ru');
     keyboardActiveClass.classList.add('en');
-    keyBoardlang = 'en';
+    siteLang = 'en';
+    localStorage.setItem('siteLang', siteLang);
   }
 };
 
@@ -107,43 +125,20 @@ function addKeyValueInput(key) {
   textarea.focus();
 }
 
-keys.forEach((key) => {
-  key.addEventListener('mousedown', (e) => {
-    e.target.classList.add('active');
-    textarea.focus();
-    if (key.dataset.keycode === 'ShiftLeft' && keyBoardlang === 'ru') {
-      keyboardActiveClass.innerHTML = '';
-      keyboard.createKeys('rushift');
-    } else if (key.dataset.keycode === 'ShiftLeft' && keyBoardlang === 'en') {
-      keyboardActiveClass.innerHTML = '';
-      keyboard.createKeys('enshift');
-    } else {
-      addKeyValueInput(key);
-    }
-  });
-  key.addEventListener('mouseup', (e) => {
-    e.target.classList.remove('active');
-    if (key.dataset.keycode === 'ShiftLeft' && keyBoardlang === 'en') {
-      keyboardActiveClass.innerHTML = '';
-      keyboard.createKeys('en');
-    }
-  });
-});
-
 // changing keyboard layouts
 // change keyboard layout on pressing Ctrl + Alt
 const keysPressed = {};
 
-document.addEventListener('keydown', (e) => {
+window.addEventListener('keydown', (e) => {
   keysPressed[e.code] = true;
-  keys.forEach((key) => {
+  document.querySelectorAll('.key').forEach((key) => {
     if (e.code === key.dataset.keycode) {
       key.classList.add('active');
       textarea.focus();
-      if (key.dataset.keycode === 'ShiftLeft' && keyBoardlang === 'ru') {
+      if (key.dataset.keycode === 'ShiftLeft' && siteLang === 'ru') {
         keyboardActiveClass.innerHTML = '';
         keyboard.createKeys('rushift');
-      } else if (key.dataset.keycode === 'ShiftLeft' && keyBoardlang === 'en') {
+      } else if (key.dataset.keycode === 'ShiftLeft' && siteLang === 'en') {
         keyboardActiveClass.innerHTML = '';
         keyboard.createKeys('enshift');
       } else {
@@ -158,20 +153,47 @@ document.addEventListener('keydown', (e) => {
   e.preventDefault();
 });
 
-document.addEventListener('keyup', (e) => {
+window.addEventListener('keyup', (e) => {
   keysPressed[e.code] = false;
-  keys.forEach((key) => {
+  document.querySelectorAll('.key').forEach((key) => {
     if (e.code === key.dataset.keycode) {
       key.classList.remove('active');
     }
-    if (key.dataset.keycode === 'ShiftLeft' && keyBoardlang === 'en') {
+    if (key.dataset.keycode === 'ShiftLeft' && siteLang === 'en') {
       keyboardActiveClass.innerHTML = '';
       keyboard.createKeys('en');
     }
-    if (key.dataset.keycode === 'ShiftLeft' && keyBoardlang === 'ru') {
+    if (key.dataset.keycode === 'ShiftLeft' && siteLang === 'ru') {
       keyboardActiveClass.innerHTML = '';
       keyboard.createKeys('ru');
     }
     textarea.focus();
+  });
+});
+
+document.querySelectorAll('.key').forEach((key) => {
+  // eslint-disable-next-line no-console
+  console.log(key);
+  key.addEventListener('mousedown', (e) => {
+    e.target.classList.add('active');
+    // eslint-disable-next-line no-console
+    console.log(e);
+    textarea.focus();
+    if (key.dataset.keycode === 'ShiftLeft' && siteLang === 'ru') {
+      keyboardActiveClass.innerHTML = '';
+      keyboard.createKeys('rushift');
+    } else if (key.dataset.keycode === 'ShiftLeft' && siteLang === 'en') {
+      keyboardActiveClass.innerHTML = '';
+      keyboard.createKeys('enshift');
+    } else {
+      addKeyValueInput(key);
+    }
+  });
+  key.addEventListener('mouseup', (e) => {
+    e.target.classList.remove('active');
+    if (key.dataset.keycode === 'ShiftLeft' && siteLang === 'en') {
+      keyboardActiveClass.innerHTML = '';
+      keyboard.createKeys('en');
+    }
   });
 });
