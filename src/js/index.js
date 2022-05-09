@@ -19,6 +19,8 @@ main.append(monitorWrapper);
 monitorWrapper.append(monitor);
 monitor.append(textarea);
 textarea.innerHTML = '';
+textarea.spellcheck = false;
+textarea.scrollLeft = textarea.scrollWidth;
 textarea.focus();
 
 // creating keyboard
@@ -48,7 +50,15 @@ const handleLangChange = () => {
   }
 };
 // handle shift and caps
-
+const handleShiftChange = () => {
+  if (keyboardActiveClass.classList.contains('en')) {
+    keyboardActiveClass.innerHTML = '';
+    keyboard.createKeys('enshift');
+  } else if (keyboardActiveClass.classList.contains('ru')) {
+    keyboardActiveClass.innerHTML = '';
+    keyboard.createKeys('rushift');
+  }
+};
 // adding key values to input
 function addKeyValueInput(key) {
   const keyContent = key.innerHTML;
@@ -105,19 +115,20 @@ keys.forEach((key) => {
     if (key.dataset.keycode === 'ShiftLeft') {
       // eslint-disable-next-line no-console
       console.log('cathc!');
-      keyboardActiveClass.innerHTML = '';
-      keyboard.createKeys('shift');
+      handleShiftChange();
+      e.preventDefault();
     }
-    // e.preventDefault();
   });
   key.addEventListener('mouseup', (e) => {
-    e.target.classList.remove('active');
+    // eslint-disable-next-line no-console
+    console.log(key.dataset.keycode);
     if (key.dataset.keycode === 'ShiftLeft') {
       // eslint-disable-next-line no-console
       console.log('cathc renmove!');
       keyboardActiveClass.innerHTML = '';
       keyboard.createKeys(keyBoardlang);
     }
+    e.target.classList.remove('active');
   });
 });
 
@@ -143,7 +154,7 @@ document.addEventListener('keydown', (e) => {
     // eslint-disable-next-line no-console
     console.log('cathc!');
     keyboardActiveClass.innerHTML = '';
-    keyboard.createKeys('shift');
+    keyboard.createKeys('enshift');
   }
   e.preventDefault();
 });
@@ -157,6 +168,8 @@ document.addEventListener('keyup', (e) => {
     textarea.focus();
   });
   if (e.code === 'ShiftLeft' || e.code === 'ShiftRight') {
+    // eslint-disable-next-line no-console
+    console.log('cathc up!');
     keyboardActiveClass.innerHTML = '';
     keyboard.createKeys(keyBoardlang);
   }

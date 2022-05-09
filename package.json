@@ -7,6 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "eslint ./src && webpack-dev-server --mode development --open",
     "build": "eslint ./src --fix && webpack --mode production",
+    "lint": "eslint ./src",
     "deploy": "gh-pages -d dist"
   },
   "repository": {
