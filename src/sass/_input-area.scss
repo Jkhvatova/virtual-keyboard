@@ -1,0 +1,51 @@
+.monitor-wrapper {
+  display: flex;
+  justify-content: center;
+}
+.monitor {
+	margin: 30px auto;
+	width: 600px;
+	height: 300px;
+	background-color: #474e5d;
+	padding: 20px;
+	border-radius: 10px;
+	box-shadow : 0 -44em 0 -40em #f5f5f5 inset;
+  display: flex;
+  justify-content: center;
+  &:before{
+    content: '';
+    display: block;
+    background-color: rgba(#000, 0.3);
+    border-radius: 50%;
+    margin: 0 auto;
+    width: 8px;
+    height: 8px;
+    position: relative;
+    top: -14px;
+    left: 292px;
+  }
+  &:after{ //logo
+    content: '';
+    display: block;
+    background-color: rgba(#000, 0.1);
+    border-radius: 50%;
+    margin: 0 auto;
+    width: 16px;
+    height: 16px;
+    position: relative;
+    top: 294px;
+    right: 292px;
+  }
+  .keyboard-input {
+    font-size: 2rem;
+    color: #B6BEC9;
+		width: 580px;
+		height: 250px;
+		background-color: #1B2B34;
+		background-size: cover;
+    outline: none;
+    border: none;
+    overflow-y: scroll;
+    padding: 10px;
+	}
+}
