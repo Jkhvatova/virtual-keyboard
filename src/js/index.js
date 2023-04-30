@@ -2,8 +2,11 @@ import '../sass/main.scss';
 import keyLayouts from './layouts';
 import Key from './Key';
 
+// window.addEventListener('beforeunload', setSiteLang);
+
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.querySelector('body');
+  let siteLang = 'en';
 
   function createDomElements() {
     const container = document.createElement('div');
@@ -33,37 +36,71 @@ document.addEventListener('DOMContentLoaded', () => {
     const keyboard = document.createElement('div');
     keyboard.className = 'keyboard';
     keyboardWrapper.appendChild(keyboard);
-    // const keys = document.querySelectorAll('.key');
 
     container.append(titleAndExplain, monitorWrapper, keyboardWrapper);
   }
   createDomElements();
-  function renderKeyboard(keys) {
+
+  // create keyboard on layout change
+
+  const keyboard = document.querySelector('.keyboard');
+
+  function renderKeyboard(keys, lang) {
+    keyboard.innerHTML = '';
     Object.entries(keys).forEach(([keycode, value]) => {
       const key = new Key();
-      key.createKey(keycode, value.en);
+      key.createKey(keycode, value[lang]);
     });
   }
-  renderKeyboard(keyLayouts);
+  renderKeyboard(keyLayouts, siteLang);
+  keyboard.classList.add(siteLang);
 
+  // change keyboard language
+
+  const changeKeyboardLang = () => {
+    if (keyboard.classList.contains('en')) {
+      renderKeyboard(keyLayouts, 'ru');
+      keyboard.classList.remove('en');
+      keyboard.classList.add('ru');
+      siteLang = 'ru';
+      localStorage.setItem('siteLang', siteLang);
+    } else if (keyboard.classList.contains('ru')) {
+      renderKeyboard(keyLayouts, 'en');
+      keyboard.classList.remove('ru');
+      keyboard.classList.add('en');
+      siteLang = 'en';
+      localStorage.setItem('siteLang', siteLang);
+    }
+  };
   // mouse click listener
   const textarea = document.querySelector('.keyboard-input');
   const keys = document.querySelectorAll('.key');
-  keys.forEach((key) => {
-    key.addEventListener('mousedown', (e) => {
-      textarea.focus();
-      e.preventDefault();
-      e.target.classList.add('active');
-      textarea.insertAdjacentText('beforeend', e.target.innerHTML);
-      // eslint-disable-next-line no-console
-      console.log(e.target.innerHTML);
-    });
-    key.addEventListener('mouseup', (e) => {
-      e.target.classList.remove('active');
-    });
+  keyboard.addEventListener('mousedown', (e) => {
+    textarea.focus();
+    e.preventDefault();
+    e.target.classList.add('active');
+    if (
+      // eslint-disable-next-line operator-linebreak
+      e.target.dataset.keycode === 'ShiftLeft' ||
+      e.target.dataset.keycode === 'ShiftRight'
+    ) {
+      renderKeyboard(keyLayouts, 'rushift');
+    }
+    if (e.target.dataset.keycode === 'AltLeft') {
+      changeKeyboardLang();
+    }
+    if (e.target.dataset.keycode === 'AltRight') {
+      changeKeyboardLang();
+    }
+    textarea.insertAdjacentText('beforeend', e.target.innerHTML);
   });
-  // keyboard click listener
+  keyboard.addEventListener('mouseup', (e) => {
+    e.target.classList.remove('active');
+    // eslint-disable-next-line no-console
+    console.log(e);
+  });
 
+  // keyboard click listener
   window.addEventListener('keydown', (e) => {
     textarea.focus();
     e.preventDefault();
