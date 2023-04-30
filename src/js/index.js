@@ -39,11 +39,47 @@ document.addEventListener('DOMContentLoaded', () => {
   }
   createDomElements();
   function renderKeyboard(keys) {
-    Object.entries(keys).forEach(([key, value]) => {
-      const newKey = new Key();
-      newKey.createKey(key, value.en);
-      // eslint-disable-next-line no-console
+    Object.entries(keys).forEach(([keycode, value]) => {
+      const key = new Key();
+      key.createKey(keycode, value.en);
     });
   }
   renderKeyboard(keyLayouts);
+
+  // mouse click listener
+  const textarea = document.querySelector('.keyboard-input');
+  const keys = document.querySelectorAll('.key');
+  keys.forEach((key) => {
+    key.addEventListener('mousedown', (e) => {
+      textarea.focus();
+      e.preventDefault();
+      e.target.classList.add('active');
+      textarea.insertAdjacentText('beforeend', e.target.innerHTML);
+      // eslint-disable-next-line no-console
+      console.log(e.target.innerHTML);
+    });
+    key.addEventListener('mouseup', (e) => {
+      e.target.classList.remove('active');
+    });
+  });
+  // keyboard click listener
+
+  window.addEventListener('keydown', (e) => {
+    textarea.focus();
+    e.preventDefault();
+    keys.forEach((key) => {
+      if (e.code === key.dataset.keycode) {
+        key.classList.add('active');
+        textarea.insertAdjacentText('beforeend', key.innerHTML);
+      }
+    });
+  });
+  window.addEventListener('keyup', (e) => {
+    keys.forEach((key) => {
+      if (e.code === key.dataset.keycode) {
+        key.classList.remove('active');
+      }
+      e.preventDefault();
+    });
+  });
 });
