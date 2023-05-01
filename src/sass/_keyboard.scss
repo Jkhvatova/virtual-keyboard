@@ -1,0 +1,14 @@
+.keyboard-wrapper{
+  display: flex;
+  justify-content: center;
+  width: 100%;
+}
+.keyboard {
+  padding: 14px 14px 16px 14px;
+  border-radius: 10px;
+  display: grid;
+  grid-template-columns: repeat(30, 30px);
+  grid-template-rows: repeat(5, 60px);
+  grid-gap: 6px;
+  background: linear-gradient(90deg, rgba(224,224,224,1) 0%, rgba(184,184,184,1) 100%);
+}
