@@ -15,8 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     titleAndExplain.className = 'title-and-explanation';
     titleAndExplain.innerHTML = `
       <h1 class="title">Virtual Keyboard</h1>
-      <p class="explanation">Created on MacOS.
-      To change the language press left ctrl + alt</p>
+      <p class="explanation">Created on MacOS. To change the language press left ctrl + alt</p>
     `;
     // monitor and text-area
     const monitorWrapper = document.createElement('div');
