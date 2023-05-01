@@ -84,6 +84,7 @@ document.addEventListener('DOMContentLoaded', () => {
       localStorage.setItem('siteLang', siteLang);
     }
   };
+
   // mouse click listener
   const textarea = document.querySelector('.keyboard-input');
   keyboard.addEventListener('mousedown', (e) => {
@@ -131,9 +132,12 @@ document.addEventListener('DOMContentLoaded', () => {
   keyboard.addEventListener('mouseup', (e) => {
     e.target.classList.remove('active');
   });
-
+  // language shortcut
+  const keysPressed = {};
   // keyboard click listener
+
   window.addEventListener('keydown', (e) => {
+    keysPressed[e.code] = true;
     textarea.focus();
     e.preventDefault();
     document.querySelectorAll('.key').forEach((key) => {
@@ -168,7 +172,7 @@ document.addEventListener('DOMContentLoaded', () => {
         } else if (key.dataset.keycode === 'ShiftLeft' && siteLang === 'en') {
           renderKeyboard(keyLayouts, 'enshift');
         }
-        if (key.dataset.keycode === 'AltLeft') {
+        if (keysPressed.ControlLeft && key.dataset.keycode === 'AltLeft') {
           changeKeyboardLang();
         }
         textarea.insertAdjacentText('beforeend', keyValue);
