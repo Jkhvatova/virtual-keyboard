@@ -2,8 +2,6 @@ import '../sass/main.scss';
 import keyLayouts from './layouts';
 import Key from './Key';
 
-// window.addEventListener('beforeunload', setSiteLang);
-
 document.addEventListener('DOMContentLoaded', () => {
   const body = document.querySelector('body');
   let siteLang = 'en';
@@ -17,7 +15,7 @@ document.addEventListener('DOMContentLoaded', () => {
     titleAndExplain.className = 'title-and-explanation';
     titleAndExplain.innerHTML = `
       <h1 class="title">Virtual Keyboard</h1>
-      <p class="explanation">Created on MacOS.<br/>
+      <p class="explanation">Created on MacOS.
       To change the language press left ctrl + alt</p>
     `;
     // monitor and text-area
@@ -56,6 +54,20 @@ document.addEventListener('DOMContentLoaded', () => {
   keyboard.classList.add(siteLang);
 
   // change keyboard language
+  // Local storage
+
+  const setLocalLangStorage = () => {
+    localStorage.setItem('siteLang', siteLang);
+  };
+  window.addEventListener('beforeunload', setLocalLangStorage);
+
+  function getLocalLangStorage() {
+    if (localStorage.getItem('siteLang')) {
+      const lang = localStorage.getItem('siteLang');
+      renderKeyboard(keyLayouts, lang);
+    }
+  }
+  window.addEventListener('load', getLocalLangStorage);
 
   const changeKeyboardLang = () => {
     if (keyboard.classList.contains('en')) {
@@ -79,25 +91,46 @@ document.addEventListener('DOMContentLoaded', () => {
     textarea.focus();
     e.preventDefault();
     e.target.classList.add('active');
-    if (
-      // eslint-disable-next-line operator-linebreak
-      e.target.dataset.keycode === 'ShiftLeft' ||
-      e.target.dataset.keycode === 'ShiftRight'
-    ) {
+    let keyValue = e.target.innerHTML;
+    switch (e.target.dataset.keycode) {
+      case 'Tab':
+        keyValue = '     ';
+        break;
+      case 'Enter':
+        keyValue = '\n';
+        break;
+      case 'ShiftLeft':
+      case 'ShiftRight':
+      case 'AltLeft':
+      case 'ControlRight':
+      case 'ControlLeft':
+      case 'AltRight':
+      case 'MetaLeft':
+      case 'MetaRight':
+      case 'CapsLock':
+      case 'Backspace':
+      case 'Del':
+        keyValue = '';
+        break;
+      default:
+        break;
+    }
+    if (e.target.dataset.keycode === 'ShiftLeft' && siteLang === 'ru') {
       renderKeyboard(keyLayouts, 'rushift');
+    } else if (e.target.dataset.keycode === 'ShiftLeft' && siteLang === 'en') {
+      renderKeyboard(keyLayouts, 'enshift');
     }
     if (e.target.dataset.keycode === 'AltLeft') {
       changeKeyboardLang();
     }
-    if (e.target.dataset.keycode === 'AltRight') {
-      changeKeyboardLang();
+    if (e.target.classList.contains('keyboard')) {
+      keyValue = '';
+      e.target.classList.remove('active');
     }
-    textarea.insertAdjacentText('beforeend', e.target.innerHTML);
+    textarea.insertAdjacentText('beforeend', keyValue);
   });
   keyboard.addEventListener('mouseup', (e) => {
     e.target.classList.remove('active');
-    // eslint-disable-next-line no-console
-    console.log(e);
   });
 
   // keyboard click listener
@@ -105,9 +138,33 @@ document.addEventListener('DOMContentLoaded', () => {
     textarea.focus();
     e.preventDefault();
     keys.forEach((key) => {
+      key.classList.add('active');
       if (e.code === key.dataset.keycode) {
-        key.classList.add('active');
-        textarea.insertAdjacentText('beforeend', key.innerHTML);
+        let keyValue = key.innerHTML;
+        switch (key.dataset.keycode) {
+          case 'Tab':
+            keyValue = '     ';
+            break;
+          case 'Enter':
+            keyValue = '\n';
+            break;
+          case 'ShiftLeft':
+          case 'ShiftRight':
+          case 'AltLeft':
+          case 'ControlRight':
+          case 'ControlLeft':
+          case 'AltRight':
+          case 'MetaLeft':
+          case 'MetaRight':
+          case 'CapsLock':
+          case 'Backspace':
+          case 'Del':
+            keyValue = '';
+            break;
+          default:
+            break;
+        }
+        textarea.insertAdjacentText('beforeend', keyValue);
       }
     });
   });
