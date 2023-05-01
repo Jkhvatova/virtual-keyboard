@@ -86,7 +86,6 @@ document.addEventListener('DOMContentLoaded', () => {
   };
   // mouse click listener
   const textarea = document.querySelector('.keyboard-input');
-  const keys = document.querySelectorAll('.key');
   keyboard.addEventListener('mousedown', (e) => {
     textarea.focus();
     e.preventDefault();
@@ -137,9 +136,9 @@ document.addEventListener('DOMContentLoaded', () => {
   window.addEventListener('keydown', (e) => {
     textarea.focus();
     e.preventDefault();
-    keys.forEach((key) => {
-      key.classList.add('active');
+    document.querySelectorAll('.key').forEach((key) => {
       if (e.code === key.dataset.keycode) {
+        key.classList.add('active');
         let keyValue = key.innerHTML;
         switch (key.dataset.keycode) {
           case 'Tab':
@@ -164,12 +163,20 @@ document.addEventListener('DOMContentLoaded', () => {
           default:
             break;
         }
+        if (key.dataset.keycode === 'ShiftLeft' && siteLang === 'ru') {
+          renderKeyboard(keyLayouts, 'rushift');
+        } else if (key.dataset.keycode === 'ShiftLeft' && siteLang === 'en') {
+          renderKeyboard(keyLayouts, 'enshift');
+        }
+        if (key.dataset.keycode === 'AltLeft') {
+          changeKeyboardLang();
+        }
         textarea.insertAdjacentText('beforeend', keyValue);
       }
     });
   });
   window.addEventListener('keyup', (e) => {
-    keys.forEach((key) => {
+    document.querySelectorAll('.key').forEach((key) => {
       if (e.code === key.dataset.keycode) {
         key.classList.remove('active');
       }
